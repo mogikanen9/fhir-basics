@@ -1,6 +1,6 @@
 package com.vlad.test.fhir.provider;
 
-import ca.uhn.fhir.model.dstu.resource.DiagnosticReport;
+import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
