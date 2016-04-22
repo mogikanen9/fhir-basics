@@ -15,9 +15,13 @@ import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.MessageHeader;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
 import ca.uhn.fhir.model.dstu2.valueset.BundleTypeEnum;
 import ca.uhn.fhir.model.dstu2.valueset.HTTPVerbEnum;
 import ca.uhn.fhir.model.dstu2.valueset.NarrativeStatusEnum;
+import ca.uhn.fhir.model.dstu2.valueset.ObservationCategoryCodesEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.XhtmlDt;
@@ -96,6 +100,23 @@ public class SimplDiagnosticReportServiceClientTestCase {
 		dReport.setIssued(new InstantDt(new Date()));
 		dReport.setText(new NarrativeDt(new XhtmlDt("test additional data/test about diagnostic report"), NarrativeStatusEnum.ADDITIONAL));
 		dReport.setId(IdDt.newRandomUuid());
+
+		//patient
+		Patient patient = new Patient();
+		patient.setId(IdDt.newRandomUuid());
+		patient.setGender(AdministrativeGenderEnum.MALE);
+		
+		
+		//observation
+		Observation observation = new Observation();
+		observation.setId(IdDt.newRandomUuid());
+		observation.setComments("My observation comments");
+		observation.setCategory(ObservationCategoryCodesEnum.EXAM);
+		observation.setSubject(new ResourceReferenceDt(patient.getId().getValue()));
+		
+		List<ResourceReferenceDt> observations = new ArrayList<ResourceReferenceDt>();
+		observations.add(new ResourceReferenceDt(observation.getId().getValue()));
+		dReport.setResult(observations);
 		
 		List<ResourceReferenceDt> data = new ArrayList<ResourceReferenceDt>();
 		data.add(new ResourceReferenceDt(dReport.getId().getValue()));
@@ -118,6 +139,19 @@ public class SimplDiagnosticReportServiceClientTestCase {
 		   .setResource(dReport)
 		   .getRequest()
 		      .setUrl("DiagnosticReport")
+		      .setMethod(HTTPVerbEnum.POST);
+		
+		bundle.addEntry()
+		   .setFullUrl(patient.getId().getValue())
+		   .setResource(patient)
+		   .getRequest()
+		      .setUrl("Patient")
+		      .setMethod(HTTPVerbEnum.POST);
+		bundle.addEntry()
+		   .setFullUrl(observation.getId().getValue())
+		   .setResource(observation)
+		   .getRequest()
+		      .setUrl("observation")
 		      .setMethod(HTTPVerbEnum.POST);
 		
 		Serializable resultId = service.create(bundle);
