@@ -10,7 +10,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<hapi-fhir.version>1.4</hapi-fhir.version>
+		<hapi-fhir.version>5.2.0</hapi-fhir.version>
 	</properties>
 	<dependencies>
 
